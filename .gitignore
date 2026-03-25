@@ -1,0 +1,72 @@
+# ============================================
+# GuppyShop - .gitignore
+# ============================================
+
+# ─── Frontend (React) ────────────────────────
+frontend/node_modules/
+frontend/build/
+frontend/.env
+frontend/.env.local
+frontend/.env.development.local
+frontend/.env.test.local
+frontend/.env.production.local
+frontend/npm-debug.log*
+frontend/yarn-debug.log*
+frontend/yarn-error.log*
+frontend/.pnp
+frontend/.pnp.js
+frontend/coverage/
+
+# ─── Backend (PHP) ───────────────────────────
+backend/reset_admin.php
+backend/test.php
+backend/uploads/
+uploads/
+
+# ─── Environment & Secrets ───────────────────
+.env
+.env.*
+*.env
+config.local.php
+backend/config/local.php
+
+# ─── Database ────────────────────────────────
+*.sql.bak
+database/backups/
+database/*.bak
+
+# ─── OS Files ────────────────────────────────
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# ─── IDE / Editor ────────────────────────────
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+*.swp
+*.swo
+*~
+
+# ─── Logs ────────────────────────────────────
+*.log
+logs/
+error_log
+php_errorlog
+
+# ─── Misc ────────────────────────────────────
+*.zip
+*.tar.gz
+*.rar
+.cache/
+tmp/
+temp/
