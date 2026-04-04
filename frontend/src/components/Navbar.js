@@ -48,11 +48,20 @@ export default function Navbar() {
           <Box
             component={Link}
             to="/"
-            sx={{ display: 'flex', alignItems: 'center', gap: 1, textDecoration: 'none', flexGrow: { xs: 1, md: 0 }, mr: { md: 3 } }}
+            sx={{ display: 'flex', alignItems: 'center', gap: 1.5, textDecoration: 'none', flexGrow: { xs: 1, md: 0 }, mr: { md: 4 } }}
           >
-            <Waves sx={{ color: '#00C8A0', fontSize: 30 }} />
-            <Typography variant="h6" fontWeight={800} color="white" letterSpacing="-0.5px">
-              GuppyShop
+            <Box
+              component="img"
+              src="/logo.png"
+              alt="Vasan Guppy Farm"
+              sx={{
+                height: { xs: 40, md: 55 },
+                width: 'auto',
+                filter: 'drop-shadow(0px 2px 4px rgba(0,0,0,0.2))'
+              }}
+            />
+            <Typography variant="h6" fontWeight={900} color="white" letterSpacing="-0.5px" sx={{ fontSize: { xs: '1rem', md: '1.25rem' } }}>
+              Vasan Guppy Farm
             </Typography>
           </Box>
 
@@ -84,7 +93,7 @@ export default function Navbar() {
                 </Tooltip>
 
                 {/* Cart (customers only) */}
-                {!isAdmin && (
+                {!isAdmin && !isMobile && (
                   <>
                     <Tooltip title="My Orders">
                       <IconButton color="inherit" component={Link} to="/orders">

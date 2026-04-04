@@ -70,9 +70,18 @@ export default function HomePage() {
         }} />
 
         <Container maxWidth="md">
-          <Waves sx={{ fontSize: 56, color: '#00C8A0', mb: 2 }} />
-          <Typography variant="h2" fontWeight={900} gutterBottom sx={{ fontSize: { xs: '2rem', md: '3rem' } }}>
-            Premium Guppy Fish Shop
+          <Box
+            component="img"
+            src="/logo.png"
+            alt="Vasan Guppy Farm"
+            sx={{
+              height: { xs: 60, md: 120 },
+              width: 'auto',
+              filter: 'drop-shadow(0px 2px 4px rgba(0,0,0,0.2))'
+            }}
+          />
+          <Typography variant="h2" fontWeight={900} gutterBottom sx={{ fontSize: { xs: '2rem', md: '3.5rem' } }}>
+            Vasan Guppy Farm
           </Typography>
           <Typography variant="h6" sx={{ opacity: 0.85, mb: 4, fontWeight: 400 }}>
             Discover rare, exotic, and show-quality guppies for your aquarium

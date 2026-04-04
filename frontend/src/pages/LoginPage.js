@@ -52,14 +52,16 @@ export default function LoginPage() {
           <Box sx={{ textAlign: 'center', mb: 3 }}>
             <Box sx={{
               display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-              width: 64, height: 64, borderRadius: '50%',
-              background: 'linear-gradient(135deg, #0A4F6E, #00C8A0)',
-              mb: 2, boxShadow: '0 8px 24px rgba(0,200,160,0.35)'
+              width: 120, height: 90, borderRadius: '50%',
+              // bgcolor: 'white',
+              mb: 2,
+              //boxShadow: '0 8px 24px rgba(10,79,110,0.15)',
+              overflow: 'hidden', p: 1
             }}>
-              <Waves sx={{ fontSize: 32, color: 'white' }} />
+              <Box component="img" src="/logo.png" sx={{ width: '100%', height: '100%', objectFit: 'containr' }} />
             </Box>
-            <Typography variant="h4" fontWeight={800} color="primary.main">
-              GuppyShop
+            <Typography variant="h4" fontWeight={900} color="primary.main">
+              Vasan Guppy Farm
             </Typography>
             <Typography color="text.secondary" mt={0.5}>Sign in to your account</Typography>
           </Box>

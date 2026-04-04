@@ -922,13 +922,22 @@ export default function AdminDashboard() {
         }}
       >
         <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
-          <Waves sx={{ color: "primary.main", fontSize: 32 }} />
+          <Box
+            component="img"
+            src="/logo.png"
+            alt="Vasan Guppy Farm"
+            sx={{
+              height: { xs: 60, md: 120 },
+              width: 'auto',
+              filter: 'drop-shadow(0px 2px 4px rgba(0,0,0,0.2))'
+            }}
+          />
           <Box>
             <Typography variant="h4" fontWeight={900} color="primary.main">
               Admin Dashboard
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              Manage your GuppyShop
+              Manage your Vasan Guppy Farm
             </Typography>
           </Box>
         </Box>

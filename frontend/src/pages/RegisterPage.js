@@ -31,7 +31,7 @@ export default function RegisterPage() {
     setLoading(true);
     try {
       await register(form.name, form.email, form.password, form.phone);
-      enqueueSnackbar('Account created! Welcome to GuppyShop 🐟', { variant: 'success' });
+      enqueueSnackbar('Account created! Welcome to Vasan Guppy Farm 🐟', { variant: 'success' });
       navigate('/');
     } catch (err) {
       setError(err.response?.data?.error || 'Registration failed.');
@@ -54,14 +54,16 @@ export default function RegisterPage() {
           <Box sx={{ textAlign: 'center', mb: 3 }}>
             <Box sx={{
               display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-              width: 64, height: 64, borderRadius: '50%',
-              background: 'linear-gradient(135deg, #0A4F6E, #00C8A0)',
-              mb: 2, boxShadow: '0 8px 24px rgba(0,200,160,0.35)'
+              width: 120, height: 90, borderRadius: '50%',
+              // bgcolor: 'white', 
+              mb: 2,
+              // boxShadow: '0 8px 24px rgba(10,79,110,0.15)',
+              overflow: 'hidden', p: 1
             }}>
-              <Waves sx={{ fontSize: 32, color: 'white' }} />
+              <Box component="img" src="/logo.png" sx={{ width: '100%', height: '100%', objectFit: 'contain' }} />
             </Box>
-            <Typography variant="h4" fontWeight={800} color="primary.main">Create Account</Typography>
-            <Typography color="text.secondary" mt={0.5}>Join GuppyShop today</Typography>
+            <Typography variant="h4" fontWeight={900} color="primary.main">Create Account</Typography>
+            <Typography color="text.secondary" mt={0.5}>Join Vasan Guppy Farm today</Typography>
           </Box>
 
           {error && <Alert severity="error" sx={{ mb: 2, borderRadius: 2 }}>{error}</Alert>}
