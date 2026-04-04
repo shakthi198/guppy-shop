@@ -8,20 +8,20 @@ const NotificationContext = createContext(null);
 export const NotificationProvider = ({ children }) => {
   const { user } = useAuth();
   const [notifications, setNotifications] = useState([]);
-  const [unreadCount, setUnreadCount] = useState(0);
+  const [unreadCount,   setUnreadCount]   = useState(0);
 
   const fetchNotifications = useCallback(async () => {
     if (!user) return;
     try {
       const res = await notificationAPI.getAll();
       setNotifications(res.data.notifications || []);
-      setUnreadCount(res.data.unread_count || 0);
-    } catch (err) {
-      // Silent fail
+      setUnreadCount(res.data.unread_count    || 0);
+    } catch {
+      // silent — user might have been logged out
     }
   }, [user]);
 
-  // Poll every 30 seconds for new notifications
+  // Poll every 30 s; clear when user logs out
   useEffect(() => {
     if (!user) {
       setNotifications([]);
@@ -29,7 +29,7 @@ export const NotificationProvider = ({ children }) => {
       return;
     }
     fetchNotifications();
-    const interval = setInterval(fetchNotifications, 30000);
+    const interval = setInterval(fetchNotifications, 30_000);
     return () => clearInterval(interval);
   }, [user, fetchNotifications]);
 
@@ -52,7 +52,9 @@ export const NotificationProvider = ({ children }) => {
   };
 
   return (
-    <NotificationContext.Provider value={{ notifications, unreadCount, fetchNotifications, markAllRead, markRead }}>
+    <NotificationContext.Provider value={{
+      notifications, unreadCount, fetchNotifications, markAllRead, markRead,
+    }}>
       {children}
     </NotificationContext.Provider>
   );

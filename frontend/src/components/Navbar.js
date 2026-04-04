@@ -8,7 +8,7 @@ import {
 import {
   Notifications, ShoppingCart, Menu as MenuIcon, Close,
   Home, AdminPanelSettings, Logout, Login, PersonAdd,
-  Circle, DoneAll, Waves
+  Circle, DoneAll, Waves, ReceiptLong
 } from '@mui/icons-material';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
@@ -85,13 +85,20 @@ export default function Navbar() {
 
                 {/* Cart (customers only) */}
                 {!isAdmin && (
-                  <Tooltip title="Cart">
-                    <IconButton color="inherit" component={Link} to="/cart">
-                      <Badge badgeContent={totalItems} color="secondary" max={99}>
-                        <ShoppingCart />
-                      </Badge>
-                    </IconButton>
-                  </Tooltip>
+                  <>
+                    <Tooltip title="My Orders">
+                      <IconButton color="inherit" component={Link} to="/orders">
+                        <ReceiptLong />
+                      </IconButton>
+                    </Tooltip>
+                    <Tooltip title="Cart">
+                      <IconButton color="inherit" component={Link} to="/cart">
+                        <Badge badgeContent={totalItems} color="secondary" max={99}>
+                          <ShoppingCart />
+                        </Badge>
+                      </IconButton>
+                    </Tooltip>
+                  </>
                 )}
 
                 {/* User Avatar */}
@@ -209,12 +216,18 @@ export default function Navbar() {
               <ListItemText primary="Fish Catalog" />
             </ListItem>
             {user && !isAdmin && (
-              <ListItem button component={Link} to="/cart" onClick={() => setMobileOpen(false)}>
-                <ListItemIcon>
-                  <Badge badgeContent={totalItems} color="secondary"><ShoppingCart color="primary" /></Badge>
-                </ListItemIcon>
-                <ListItemText primary="Cart" />
-              </ListItem>
+              <>
+                <ListItem button component={Link} to="/orders" onClick={() => setMobileOpen(false)}>
+                  <ListItemIcon><ReceiptLong color="primary" /></ListItemIcon>
+                  <ListItemText primary="My Orders" />
+                </ListItem>
+                <ListItem button component={Link} to="/cart" onClick={() => setMobileOpen(false)}>
+                  <ListItemIcon>
+                    <Badge badgeContent={totalItems} color="secondary"><ShoppingCart color="primary" /></Badge>
+                  </ListItemIcon>
+                  <ListItemText primary="Cart" />
+                </ListItem>
+              </>
             )}
             {isAdmin && (
               <ListItem button component={Link} to="/admin" onClick={() => setMobileOpen(false)}>

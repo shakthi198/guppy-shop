@@ -23,7 +23,6 @@ export default function LoginPage() {
   const from = location.state?.from?.pathname || '/';
 
   const handleSubmit = async (e) => {
-    debugger;
     e.preventDefault();
     setError('');
     setLoading(true);

@@ -1,20 +1,40 @@
 // frontend/src/context/CartContext.js
+// Cart is stored per-user using key: guppy_cart_<userId>
+// Unauthenticated users get an empty cart that is discarded on logout.
+
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { useAuth } from './AuthContext';
 
 const CartContext = createContext(null);
 
-export const CartProvider = ({ children }) => {
-  const [cartItems, setCartItems] = useState(() => {
-    try {
-      return JSON.parse(localStorage.getItem('guppy_cart') || '[]');
-    } catch {
-      return [];
-    }
-  });
+// Return the localStorage key for a given user (null → guest, no persistence)
+const cartKey = (userId) => userId ? `guppy_cart_${userId}` : null;
 
+export const CartProvider = ({ children }) => {
+  const { user } = useAuth();
+  const [cartItems, setCartItems] = useState([]);
+
+  // Load the correct cart whenever the logged-in user changes
   useEffect(() => {
-    localStorage.setItem('guppy_cart', JSON.stringify(cartItems));
-  }, [cartItems]);
+    const key = cartKey(user?.id);
+    if (!key) {
+      setCartItems([]);   // no user → empty cart
+      return;
+    }
+    try {
+      const stored = localStorage.getItem(key);
+      setCartItems(stored ? JSON.parse(stored) : []);
+    } catch {
+      setCartItems([]);
+    }
+  }, [user?.id]);   // re-run when user switches
+
+  // Persist to user-specific key on every change
+  useEffect(() => {
+    const key = cartKey(user?.id);
+    if (!key) return;   // don't persist for guests
+    localStorage.setItem(key, JSON.stringify(cartItems));
+  }, [cartItems, user?.id]);
 
   const addToCart = (fish, quantity = 1) => {
     setCartItems((prev) => {
@@ -35,24 +55,32 @@ export const CartProvider = ({ children }) => {
   };
 
   const updateQuantity = (fishId, quantity) => {
-    if (quantity <= 0) {
-      removeFromCart(fishId);
-      return;
-    }
+    if (quantity <= 0) { removeFromCart(fishId); return; }
     setCartItems((prev) =>
       prev.map((item) => (item.id === fishId ? { ...item, quantity } : item))
     );
   };
 
-  const clearCart = () => setCartItems([]);
+  // clearCart removes items from state AND localStorage
+  const clearCart = () => {
+    setCartItems([]);
+    const key = cartKey(user?.id);
+    if (key) localStorage.removeItem(key);
+  };
 
-  const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
-  const totalAmount = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const totalItems  = cartItems.reduce((s, i) => s + i.quantity, 0);
+  const totalAmount = cartItems.reduce((s, i) => s + i.price * i.quantity, 0);
 
   return (
-    <CartContext.Provider
-      value={{ cartItems, addToCart, removeFromCart, updateQuantity, clearCart, totalItems, totalAmount }}
-    >
+    <CartContext.Provider value={{
+      cartItems,
+      addToCart,
+      removeFromCart,
+      updateQuantity,
+      clearCart,
+      totalItems,
+      totalAmount,
+    }}>
       {children}
     </CartContext.Provider>
   );

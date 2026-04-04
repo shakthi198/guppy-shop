@@ -55,8 +55,10 @@ import {
   Person,
   Receipt,
   PinDrop,
+  CheckCircle,
+  CloudUpload,
 } from "@mui/icons-material";
-import { fishAPI, orderAPI } from "../utils/api";
+import { fishAPI, orderAPI, notificationAPI, uploadAPI, getImageUrl } from "../utils/api";
 import { useSnackbar } from "notistack";
 import { useNotifications } from "../context/NotificationContext";
 
@@ -128,9 +130,8 @@ function AdminOrderRow({ order, onStatusChange }) {
   };
   const payColor = {
     Paid: "success",
-    Failed: "error",
-    Pending: "default",
-    Refunded: "warning",
+    Unpaid: "error",
+    Pending: "warning",
   };
 
   return (
@@ -209,12 +210,30 @@ function AdminOrderRow({ order, onStatusChange }) {
 
         <FormControl
           size="small"
+          sx={{ minWidth: 120 }}
+          onClick={(e) => e.stopPropagation()}
+        >
+          <Select
+            value={order.payment_status || "Pending"}
+            onChange={(e) => onStatusChange(order.id, { payment_status: e.target.value })}
+            sx={{ fontSize: 13, fontWeight: 600 }}
+          >
+            {["Pending", "Paid", "Unpaid"].map((p) => (
+              <MenuItem key={p} value={p}>
+                {p}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+
+        <FormControl
+          size="small"
           sx={{ minWidth: 130 }}
           onClick={(e) => e.stopPropagation()}
         >
           <Select
             value={order.status}
-            onChange={(e) => onStatusChange(order.id, e.target.value)}
+            onChange={(e) => onStatusChange(order.id, { status: e.target.value })}
             sx={{ fontSize: 13, fontWeight: 600 }}
           >
             {["Pending", "Shipped", "Delivered", "Cancelled"].map((s) => (
@@ -610,8 +629,26 @@ function FishDialog({ open, onClose, fish, onSaved }) {
     setError("");
   }, [fish, open]);
 
+  const [uploading, setUploading] = useState(false);
+
   const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
+
+  const handleUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    setUploading(true);
+    try {
+      const res = await uploadAPI.uploadImage(file);
+      setForm({ ...form, image: res.data.url });
+      enqueueSnackbar("Image uploaded!", { variant: "success" });
+    } catch {
+      enqueueSnackbar("Upload failed", { variant: "error" });
+    } finally {
+      setUploading(false);
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -706,14 +743,47 @@ function FishDialog({ open, onClose, fish, onSaved }) {
               />
             </Grid>
           </Grid>
-          <TextField
-            label="Image URL"
-            name="image"
-            fullWidth
-            value={form.image}
-            onChange={handleChange}
-            placeholder="https://..."
-          />
+          <Box>
+            <Typography variant="caption" fontWeight={700} color="text.secondary" sx={{ display: 'block', mb: 1 }}>
+              FISH IMAGE
+            </Typography>
+            <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
+              <Avatar
+                src={getImageUrl(form.image)}
+                variant="rounded"
+                sx={{ width: 80, height: 80, bgcolor: "#f0f0f0", border: '1px solid #ddd' }}
+              >
+                🐟
+              </Avatar>
+              <Box sx={{ flex: 1 }}>
+                <Button
+                  variant="outlined"
+                  component="label"
+                  startIcon={uploading ? <CircularProgress size={20} /> : <CloudUpload />}
+                  disabled={uploading}
+                  fullWidth
+                  sx={{ mb: 1 }}
+                >
+                  {uploading ? "Uploading..." : "Upload Image"}
+                  <input
+                    type="file"
+                    hidden
+                    accept="image/*"
+                    onChange={handleUpload}
+                  />
+                </Button>
+                <TextField
+                  label="Or use URL"
+                  name="image"
+                  fullWidth
+                  size="small"
+                  value={form.image}
+                  onChange={handleChange}
+                  placeholder="https://..."
+                />
+              </Box>
+            </Box>
+          </Box>
           <TextField
             label="Description"
             name="description"
@@ -760,7 +830,7 @@ export default function AdminDashboard() {
   const [editingFish, setEditingFish] = useState(null);
   const [deleteConfirm, setDeleteConfirm] = useState(null);
   const { enqueueSnackbar } = useSnackbar();
-  const { notifications, unreadCount } = useNotifications();
+  const { notifications, unreadCount, markRead, markAllRead } = useNotifications();
 
   const loadFish = useCallback(async () => {
     setLoadingFish(true);
@@ -802,10 +872,29 @@ export default function AdminDashboard() {
     }
   };
 
-  const handleOrderStatus = async (orderId, status) => {
+  const handleMarkRead = async (id) => {
     try {
-      await orderAPI.updateStatus(orderId, status);
-      enqueueSnackbar(`Order #${orderId} updated to ${status}`, {
+      await markRead([id]);
+    } catch {
+      enqueueSnackbar("Action failed", { variant: "error" });
+    }
+  };
+
+  const handleMarkAllRead = async () => {
+    try {
+      await markAllRead();
+      enqueueSnackbar("All notifications marked as read", {
+        variant: "success",
+      });
+    } catch {
+      enqueueSnackbar("Action failed", { variant: "error" });
+    }
+  };
+
+  const handleOrderUpdate = async (orderId, updateData) => {
+    try {
+      await orderAPI.updateStatus(orderId, updateData);
+      enqueueSnackbar(`Order #${orderId} updated`, {
         variant: "success",
       });
       loadOrders();
@@ -982,7 +1071,7 @@ export default function AdminDashboard() {
                       <TableRow key={f.id} hover>
                         <TableCell>
                           <Avatar
-                            src={f.image || ""}
+                            src={getImageUrl(f.image)}
                             variant="rounded"
                             sx={{ width: 48, height: 48, bgcolor: "#E8F4F8" }}
                           >
@@ -1109,7 +1198,7 @@ export default function AdminDashboard() {
                   <AdminOrderRow
                     key={order.id}
                     order={order}
-                    onStatusChange={handleOrderStatus}
+                    onStatusChange={handleOrderUpdate}
                   />
                 ))}
               </Box>
@@ -1120,9 +1209,29 @@ export default function AdminDashboard() {
         {/* Notifications Tab */}
         {tab === 2 && (
           <Box sx={{ p: 3, maxHeight: 600, overflowY: "auto" }}>
-            <Typography variant="h6" fontWeight={700} mb={2}>
-              Recent Notifications
-            </Typography>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                mb: 2,
+              }}
+            >
+              <Typography variant="h6" fontWeight={700}>
+                Recent Notifications
+              </Typography>
+              {unreadCount > 0 && (
+                <Button
+                  size="small"
+                  variant="text"
+                  startIcon={<CheckCircle fontSize="small" />}
+                  onClick={handleMarkAllRead}
+                  sx={{ fontWeight: 700 }}
+                >
+                  Mark All Read
+                </Button>
+              )}
+            </Box>
             {notifications.length === 0 ? (
               <Box sx={{ textAlign: "center", py: 6, color: "text.secondary" }}>
                 <Typography>No notifications yet</Typography>
@@ -1160,12 +1269,23 @@ export default function AdminDashboard() {
                         </Typography>
                       </Box>
                       {!notif.is_read && (
-                        <Chip
-                          label="New"
-                          color="secondary"
-                          size="small"
-                          sx={{ fontWeight: 700, height: 20, flexShrink: 0 }}
-                        />
+                        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                          <Chip
+                            label="New"
+                            color="secondary"
+                            size="small"
+                            sx={{ fontWeight: 700, height: 20, flexShrink: 0 }}
+                          />
+                          <Tooltip title="Mark Read">
+                            <IconButton
+                              size="small"
+                              onClick={() => handleMarkRead(notif.id)}
+                              color="primary"
+                            >
+                              <CheckCircle sx={{ fontSize: 18 }} />
+                            </IconButton>
+                          </Tooltip>
+                        </Box>
                       )}
                     </Box>
                   </CardContent>

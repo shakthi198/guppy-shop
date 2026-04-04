@@ -9,6 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import { useSnackbar } from 'notistack';
+import { getImageUrl } from '../utils/api';
 
 const PLACEHOLDER = 'https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?w=400&q=80';
 
@@ -64,7 +65,7 @@ export default function FishCard({ fish }) {
         <CardMedia
           component="img"
           height="200"
-          image={fish.image || PLACEHOLDER}
+          image={getImageUrl(fish.image) || PLACEHOLDER}
           alt={fish.name}
           onError={(e) => { e.target.src = PLACEHOLDER; }}
           sx={{ objectFit: 'cover', transition: 'transform 0.3s', '&:hover': { transform: 'scale(1.05)' } }}

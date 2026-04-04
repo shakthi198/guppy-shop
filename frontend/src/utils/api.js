@@ -9,6 +9,14 @@ const api = axios.create({
   headers: { "Content-Type": "application/json" },
 });
 
+export const getImageUrl = (path) => {
+  if (!path) return "";
+  if (path.startsWith("http")) return path;
+  // If baseline is http://localhost/guppy_shop/backend, then image is in http://localhost/guppy_shop
+  const serverBase = BASE_URL.replace(/\/backend\/?$/, "");
+  return `${serverBase}${path.startsWith("/") ? "" : "/"}${path}`;
+};
+
 // Attach JWT token to every request
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem("guppy_token");
@@ -50,7 +58,7 @@ export const orderAPI = {
   create: (data) => api.post("/orders", data),
   getAll: () => api.get("/orders"),
   getOne: (id) => api.get(`/orders/${id}`),
-  updateStatus: (id, status) => api.put(`/orders/${id}`, { status }),
+  updateStatus: (id, data) => api.put(`/orders/${id}`, data),
 };
 
 // ---- Notifications ----

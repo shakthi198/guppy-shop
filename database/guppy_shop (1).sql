@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 25, 2026 at 06:30 PM
+-- Generation Time: Mar 28, 2026 at 08:00 AM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -87,8 +87,8 @@ CREATE TABLE `orders` (
   `user_id` int(11) NOT NULL,
   `total_amount` decimal(10,2) NOT NULL,
   `status` enum('Pending','Shipped','Delivered','Cancelled') DEFAULT 'Pending',
-  `payment_status` enum('Pending','Paid','Failed','Refunded') DEFAULT 'Pending',
-  `payment_id` varchar(255) DEFAULT NULL,
+  `payment_method` varchar(255) NOT NULL DEFAULT 'Cash on Delivery',
+  `payment_status` enum('Pending','Paid','Unpaid') DEFAULT 'Pending',
   `shipping_name` varchar(100) DEFAULT NULL,
   `shipping_address` text DEFAULT NULL,
   `shipping_pincode` varchar(20) DEFAULT NULL,
@@ -101,8 +101,8 @@ CREATE TABLE `orders` (
 -- Dumping data for table `orders`
 --
 
-INSERT INTO `orders` (`id`, `user_id`, `total_amount`, `status`, `payment_status`, `payment_id`, `shipping_name`, `shipping_address`, `shipping_pincode`, `shipping_phone`, `created_at`, `updated_at`) VALUES
-(1, 2, 299.00, 'Shipped', 'Paid', 'demo_payment_1774108523536', 'shakthi', '29, deva street , chennai', '600001', '9876543210', '2026-03-21 15:55:23', '2026-03-21 15:56:37');
+INSERT INTO `orders` (`id`, `user_id`, `total_amount`, `status`, `payment_method`, `shipping_name`, `shipping_address`, `shipping_pincode`, `shipping_phone`, `created_at`, `updated_at`) VALUES
+(1, 2, 299.00, 'Shipped', 'Cash on Delivery', 'shakthi', '29, deva street , chennai', '600001', '9876543210', '2026-03-21 15:55:23', '2026-03-21 15:56:37');
 
 -- --------------------------------------------------------
 
@@ -149,7 +149,8 @@ CREATE TABLE `users` (
 
 INSERT INTO `users` (`id`, `name`, `email`, `password`, `role`, `phone`, `address`, `created_at`, `updated_at`) VALUES
 (1, 'Admin', 'admin@guppyshop.com', '$2y$10$0Mj3PVx9vpDOteodQuelgupIj.2Uh30.ij.SGdbvogUwN3fj0kpaC', 'admin', NULL, NULL, '2026-03-21 15:43:19', '2026-03-21 15:52:01'),
-(2, 'shakthi', 'shakthi@gmail.com', '$2y$12$4m6FiT9gBHImmpv3aO2vkuD2QJhS.6XH6ShdNZuPAZ6W.84d2AYTW', 'customer', '9876543210', NULL, '2026-03-21 15:54:00', '2026-03-21 15:54:00');
+(2, 'shakthi', 'shakthi@gmail.com', '$2y$12$4m6FiT9gBHImmpv3aO2vkuD2QJhS.6XH6ShdNZuPAZ6W.84d2AYTW', 'customer', '9876543210', NULL, '2026-03-21 15:54:00', '2026-03-21 15:54:00'),
+(3, 'sample', 'sample@gmail.com', '$2y$12$qBpx5qDVQzn7T/7yEnIhte7NVHxVcf7EEocLpyBgMVR4BcJ8EJVjm', 'customer', '9876543218', NULL, '2026-03-28 06:38:32', '2026-03-28 06:38:32');
 
 --
 -- Indexes for dumped tables
@@ -223,7 +224,7 @@ ALTER TABLE `order_items`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- Constraints for dumped tables

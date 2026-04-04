@@ -86,8 +86,7 @@ try {
             } elseif ($method === 'GET' && $id) {
                 OrderController::getOne((int)$id, $user);
             } elseif ($method === 'PUT' && $id) {
-                requireRole($user, 'admin');
-                OrderController::updateStatus((int)$id, $body);
+                OrderController::updateStatus((int)$id, $user, $body);
             } else {
                 respond(405, ['error' => 'Method not allowed']);
             }

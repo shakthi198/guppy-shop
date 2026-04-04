@@ -10,7 +10,7 @@ import {
   NavigateNext
 } from '@mui/icons-material';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { fishAPI } from '../utils/api';
+import { fishAPI, getImageUrl } from '../utils/api';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import { useSnackbar } from 'notistack';
@@ -82,7 +82,7 @@ export default function FishDetailPage() {
             bgcolor: '#E8F4F8',
           }}>
             <img
-              src={fish.image || PLACEHOLDER}
+              src={getImageUrl(fish.image) || PLACEHOLDER}
               alt={fish.name}
               onError={(e) => { e.target.src = PLACEHOLDER; }}
               style={{ width: '100%', height: 380, objectFit: 'cover', display: 'block' }}
