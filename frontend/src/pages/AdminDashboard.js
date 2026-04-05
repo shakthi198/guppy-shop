@@ -924,7 +924,7 @@ export default function AdminDashboard() {
         <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
           <Box
             component="img"
-            src="/logo.png"
+            src="/logo1.png"
             alt="Vasan Guppy Farm"
             sx={{
               height: { xs: 60, md: 120 },

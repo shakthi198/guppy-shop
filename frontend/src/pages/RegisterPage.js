@@ -60,7 +60,7 @@ export default function RegisterPage() {
               // boxShadow: '0 8px 24px rgba(10,79,110,0.15)',
               overflow: 'hidden', p: 1
             }}>
-              <Box component="img" src="/logo.png" sx={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+              <Box component="img" src="/logo1.png" sx={{ width: '100%', height: '100%', objectFit: 'contain' }} />
             </Box>
             <Typography variant="h4" fontWeight={900} color="primary.main">Create Account</Typography>
             <Typography color="text.secondary" mt={0.5}>Join Vasan Guppy Farm today</Typography>
